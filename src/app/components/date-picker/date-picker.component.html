@@ -1,0 +1,40 @@
+<style>
+  .centric-date-picker {
+    font-family: monospace;
+
+    .text-input {
+    }
+
+    /*background: red;*/
+    border: 1px solid;
+  }
+</style>
+<div class="centric-date-picker">
+  <div (click)="showCalendar = true" class="text-input">
+    <app-number-input #day (change)="modelChanged()" (focusNext)="month.focusMe()" (gotFocus)="numberFocused()"
+                      [(data)]="model.date.day"
+                      [options]="options[UnitType.Date]"
+    ></app-number-input>
+    <app-number-input #month (change)="modelChanged()" (focusNext)="year.focusMe()" (focusPrev)="day.focusMe()"
+                      (gotFocus)="numberFocused()"
+                      [(data)]="model.date.month" [options]="options[UnitType.Month]"
+    ></app-number-input>
+    <app-number-input #year (change)="modelChanged()" (focusNext)="hours.focusMe()" (focusPrev)="month.focusMe()"
+                      (gotFocus)="numberFocused()"
+                      [(data)]="model.date.year" [options]="options[UnitType.Year]"
+    ></app-number-input>
+    <app-number-input #hours (change)="modelChanged()" (focusNext)="minutes.focusMe()" (focusPrev)="year.focusMe()"
+                      (gotFocus)="numberFocused()"
+                      [(data)]="model.time.hours" [options]="options[UnitType.Hours]"
+    ></app-number-input>
+    <app-number-input #minutes (change)="modelChanged()" (focusNext)="seconds.focusMe()"
+                      (focusPrev)="hours.focusMe()" (gotFocus)="numberFocused()"
+                      [(data)]="model.time.minutes" [options]="options[UnitType.Minutes]"
+    ></app-number-input>
+    <app-number-input #seconds (change)="modelChanged()" (focusPrev)="minutes.focusMe()"
+                      (gotFocus)="numberFocused()" [(data)]="model.time.seconds"
+                      [options]="options[UnitType.Seconds]"
+    ></app-number-input>
+  </div>
+  <app-pop-up (datePickerChange)="datePickerChanged($event)" [(show)]="showCalendar" [date]="date"></app-pop-up>
+</div>
