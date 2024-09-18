@@ -36,39 +36,38 @@
 </style>
 <div class="centric-date-picker">
   <div (click)="showCalendar = true" class="text-input-grid">
-    <app-number-input #day [options]="options[UnitType.Date]" (change)="modelChanged()"
-                      (focusNext)="month.focusMe()" (gotFocus)="numberFocused()"
+    <app-number-input #day [options]="options[UnitType.Date]" (change)="modelChanged()"  (gotFocus)="numberFocused()"
+                      (focusNext)="month.focusMe()"
                       [(data)]="model.date.day"
     ></app-number-input>
     <div class="date-separator"></div>
-    <app-number-input #month [options]="options[UnitType.Month]" (change)="modelChanged()"
-                      (focusNext)="year.focusMe()" (focusPrev)="day.focusMe()"
-                      (gotFocus)="numberFocused()" [(data)]="model.date.month"
+    <app-number-input #month [options]="options[UnitType.Month]" (change)="modelChanged()" (gotFocus)="numberFocused()"
+                      (focusPrev)="day.focusMe()" (focusNext)="year.focusMe()"
+                      [(data)]="model.date.month"
     ></app-number-input>
     <div class="date-separator"></div>
-    <app-number-input #year [options]="options[UnitType.Year]" (change)="modelChanged()"
-                      (focusNext)="showTime && hours?.focusMe()" (focusPrev)="month.focusMe()"
-                      (gotFocus)="numberFocused()" [(data)]="model.date.year"
+    <app-number-input #year [options]="options[UnitType.Year]" (change)="modelChanged()" (gotFocus)="numberFocused()"
+                      (focusPrev)="month.focusMe()" (focusNext)="showTime && hours?.focusMe()"
+                      [(data)]="model.date.year"
     ></app-number-input>
     @if (showTime) {
       <div class="date-time-separator"></div>
-      <app-number-input #hours [options]="options[UnitType.Hours]" (change)="modelChanged()"
-                        (gotFocus)="numberFocused()"
+      <app-number-input #hours [options]="options[UnitType.Hours]" (change)="modelChanged()" (gotFocus)="numberFocused()"
                         (focusPrev)="year.focusMe()" (focusNext)="minutes.focusMe()"
                         [(data)]="model.time.hours"
       ></app-number-input>
       <div class="time-separator"></div>
-      <app-number-input #minutes [options]="options[UnitType.Minutes]" (change)="modelChanged()"
-                        (gotFocus)="numberFocused()"
-                        (focusPrev)="hours.focusMe()" (focusNext)="seconds.focusMe()"
+      <app-number-input #minutes [options]="options[UnitType.Minutes]" (change)="modelChanged()" (gotFocus)="numberFocused()"
+                        (focusPrev)="hours.focusMe()" (focusNext)="showSeconds && seconds?.focusMe()"
                         [(data)]="model.time.minutes"
       ></app-number-input>
-      <div class="time-separator"></div>
-      <app-number-input #seconds [options]="options[UnitType.Seconds]" (change)="modelChanged()"
-                        (gotFocus)="numberFocused()"
-                        (focusPrev)="minutes.focusMe()"
-                        [(data)]="model.time.seconds"
-      ></app-number-input>
+      @if (showSeconds) {
+        <div class="time-separator"></div>
+        <app-number-input #seconds [options]="options[UnitType.Seconds]" (change)="modelChanged()" (gotFocus)="numberFocused()"
+                          (focusPrev)="minutes.focusMe()"
+                          [(data)]="model.time.seconds"
+        ></app-number-input>
+      }
     }
   </div>
   <app-pop-up (datePickerChange)="datePickerChanged($event)" [(show)]="showCalendar" [date]="date"></app-pop-up>

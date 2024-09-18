@@ -23,6 +23,7 @@ import {DateUtilsService} from "../../services/date-utils.service";
 export class DatePickerComponent implements OnInit {
   @Input() date: Date;
   @Input() showTime: boolean;
+  @Input() showSeconds: boolean;
   @Output() changed = new EventEmitter<Date>();
   @ViewChild('hours') hours: NumberInputComponent | undefined;
   @ViewChild('minutes') minutes: NumberInputComponent | undefined;
@@ -42,6 +43,7 @@ export class DatePickerComponent implements OnInit {
     this.date = new Date();
     this.model = this.convertorService.toModel(this.date);
     this.showTime = true;
+    this.showSeconds = true;
     this.options[UnitType.Year] = <NumberInputOptionsModel>{min: 0, max: 2200, placeholder: 'YYYY', length: 4};
     this.options[UnitType.Month] = <NumberInputOptionsModel>{min: 1, max: 12, placeholder: 'MM', length: 2};
     this.options[UnitType.Date] = <NumberInputOptionsModel>{min: 1, max: 31, placeholder: 'DD', length: 2};
