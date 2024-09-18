@@ -19,7 +19,6 @@ export class PopUpComponent implements OnInit, OnChanges {
 
   constructor(private dateUtilsService: DateUtilsService) {
   }
-
   ngOnInit() {
     if (!this.date) {
       this.date = new Date();

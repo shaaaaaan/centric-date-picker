@@ -12,12 +12,6 @@ import {NumberInputOptionsModel} from "../../models/NumberInputOptionsModel";
   styleUrl: './number-input.component.css'
 })
 export class NumberInputComponent {
-  @Input() options: NumberInputOptionsModel | undefined;
-  @Output() dataChange = new EventEmitter<number>();
-  @Output() gotFocus = new EventEmitter<void>();
-  @Output() focusPrev = new EventEmitter<void>();
-  @Output() focusNext = new EventEmitter<void>();
-  @ViewChild('domElement', {static: true}) domElement: ElementRef | undefined;
   // VARIABLES
   digitsEnteredOnGainingFocus: number = 0;
 
@@ -26,19 +20,24 @@ export class NumberInputComponent {
   get data(): number | undefined {
     return this._data;
   }
-
-  @Input() set data(value: number | undefined) {
-    this._data = value;
-    this.input(value);
-  }
+  @Input() options: NumberInputOptionsModel | undefined;
+  @Output() dataChange = new EventEmitter<number>();
+  @Output() gotFocus = new EventEmitter<void>();
+  @Output() focusPrev = new EventEmitter<void>();
+  @Output() focusNext = new EventEmitter<void>();
+  @ViewChild('domElement', {static: true}) domElement: ElementRef | undefined;
 
   _inputElement: HTMLInputElement | undefined;
-
   get inputElement(): HTMLInputElement | undefined {
     if (!this._inputElement) {
       this._inputElement = this.domElement?.nativeElement as HTMLInputElement;
     }
     return this._inputElement;
+  }
+
+  @Input() set data(value: number | undefined) {
+    this._data = value;
+    this.input(value);
   }
 
   public focusMe() {
@@ -51,12 +50,10 @@ export class NumberInputComponent {
       const inputVal = valueFromSetter ?? parseInt(inputRef.value);
       if (!isNaN(inputVal)) {
         let didPadding: boolean = false;
-        if (this.options?.maxLength != null) {
-          if (this.options.maxLength === 2) {
-            if (inputVal < 10) {
-              inputRef.value = '0' + inputVal;
-              didPadding = true;
-            }
+        if (this.options?.length === 2) {
+          if (inputVal < 10) {
+            inputRef.value = '0' + inputVal;
+            didPadding = true;
           }
         }
         if (!didPadding) {
@@ -119,8 +116,8 @@ export class NumberInputComponent {
           }
         }
 
-        if (this.options.maxLength != null &&
-          this.digitsEnteredOnGainingFocus >= this.options.maxLength) {
+        if (this.options.length != null &&
+          this.digitsEnteredOnGainingFocus >= this.options.length) {
           console.debug('we need to ensure if max length is reached we disallow further entry unless backspaced/deleted');
           $event.preventDefault();
           return;
@@ -140,18 +137,20 @@ export class NumberInputComponent {
   keyUp() {
     if (this.options) {
       const valueAsNumber = parseInt(this.inputElement?.value ?? '');
-      if (isFinite(valueAsNumber)) {
+      if (isFinite(valueAsNumber) && this.options.length != null && this.digitsEnteredOnGainingFocus >= this.options.length) {
         if (this.options.max != null && valueAsNumber > this.options.max) {
           this.inputElement!.value = this.options.max.toString();
+          console.debug(`if all digits entered, move to next, since value: ${valueAsNumber} more than min: ${this.options.max}`);
           this.focusNext.emit();
           return;
         } else if (this.options.min != null && valueAsNumber < this.options.min) {
           this.inputElement!.value = this.options.min.toString();
+          console.debug(`if all digits entered, move to prev, since value: ${valueAsNumber} less than min: ${this.options.min}`);
           this.focusNext.emit();
           return;
         }
       }
-      if (this.digitsEnteredOnGainingFocus == this.options.maxLength) {
+      if (this.digitsEnteredOnGainingFocus == this.options.length) {
         console.debug('got enough keys, move to next');
         this.focusNext.emit();
       }

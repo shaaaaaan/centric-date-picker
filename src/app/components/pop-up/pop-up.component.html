@@ -5,7 +5,6 @@
     border: 1px solid;
     padding: .25rem;
     user-select: none;
-
     .grid {
       display: grid;
       grid-gap: 0.5rem;
@@ -13,7 +12,6 @@
       align-items: stretch;
       justify-items: stretch;
       padding: .25rem;
-
       .header-toolbar-grid {
         grid-column: 1 / 8;
         display: grid;
@@ -22,43 +20,35 @@
         justify-items: center;
         grid-template-columns: auto 1fr auto;
         padding: .25rem;
-
         .title {
           font-size: 1.25rem;
           font-weight: bold;
-
           .month-title {
             color: blue;
           }
-
           .year-title {
             color: lightgrey;
             padding-left: 1rem;
           }
         }
       }
-
       .header {
         font-weight: bold;
       }
-
       .date {
         cursor: pointer;
         display: grid;
         justify-items: center;
         padding: .25rem;
       }
-
       .date.selected {
         background: red;
         color: white;
         font-weight: bold;
       }
-
       .date:not(.is-main-month) {
         color: lightgrey;
       }
-
       .footer-toolbar-grid {
         grid-column: 1 / 8;
         display: grid;
@@ -66,7 +56,6 @@
         grid-template-columns: 1fr 1fr;
         font-weight: bold;
         padding: .25rem;
-
         .button {
           background: blue;
           color: white;
@@ -74,7 +63,6 @@
         }
       }
     }
-
     .button {
       cursor: pointer;
     }
@@ -84,12 +72,12 @@
   <div class="centric-calendar">
     <div class="grid">
       <div class="header-toolbar-grid">
-        <div class="button" (click)="prevMonth()"> <</div>
+          <div class="button" (click)="prevMonth()"> <</div>
         <div class="title">
           <span class="month-title">{{ monthTitle?.toUpperCase() }}</span>
           <span class="year-title">{{ date?.getFullYear()?.toString() ?? '' }}</span>
         </div>
-        <div class="button" (click)="nextMonth()"> ></div>
+          <div class="button" (click)="nextMonth()"> ></div>
       </div>
       <div class="header">MON</div>
       <div class="header">TUE</div>
@@ -99,9 +87,9 @@
       <div class="header">SAT</div>
       <div class="header">SUN</div>
       @for (item of calendar; track item.date) {
-        <div class="date" [class.is-main-month]="item.isMainMonth" [class.selected]="item.isOriginDate"
-             (click)="onDateClick(item.date)">{{ item.date?.getDate() }}
-        </div>
+          <div class="date" [class.is-main-month]="item.isMainMonth" [class.selected]="item.isOriginDate"
+               (click)="onDateClick(item.date)">{{ item.date?.getDate() }}
+          </div>
       }
       <div class="footer-toolbar-grid">
         <div class="button" (click)="clear()">CLEAR</div>

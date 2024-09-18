@@ -6,16 +6,20 @@
     padding: 0;
     margin: 0;
   }
+
+  input::-webkit-inner-spin-button {
+    display: none;
+  }
 </style>
 <input #domElement
-       (click)="selectAllText()"
        (focus)="focus($event)"
        (input)="input()"
-       (keydown)="keyDown($event)"
-       (keyup)="keyUp()"
-       [max]="options?.max ?? null"
        [min]="options?.min ?? null"
        [placeholder]="options?.placeholder"
+       (click)="selectAllText()"
+       (keydown)="keyDown($event)"
+       (keyup)="keyUp()"
        class="number-input"
        type="number"
+       [max]="options?.max ?? null"
 >

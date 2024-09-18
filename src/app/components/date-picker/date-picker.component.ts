@@ -21,32 +21,29 @@ import {NumberInputOptionsModel} from "../../models/NumberInputOptionsModel";
 })
 export class DatePickerComponent implements OnInit {
   @Input() date: Date;
-  @Input() format: UnitType[];
+  @Input() showTime: boolean;
   @Output() changed = new EventEmitter<Date>();
-  @ViewChild('hours') hours: HTMLInputElement | undefined;
-  @ViewChild('minutes') minutes: HTMLInputElement | undefined;
-  @ViewChild('seconds') seconds: HTMLInputElement | undefined;
+  @ViewChild('hours') hours: NumberInputComponent | undefined;
+  @ViewChild('minutes') minutes: NumberInputComponent | undefined;
+  @ViewChild('seconds') seconds: NumberInputComponent | undefined;
+
   // VARIABLES
   model: DatePickerModel;
   showCalendar: boolean = false;
   clickedInside: boolean = false;
-  public options: { [unitType: string]: NumberInputOptionsModel } = {};
-  public modelReferences: { [unitType: string]: number } = {};
+  protected options: { [unitType: string]: NumberInputOptionsModel } = {};
   protected readonly UnitType = UnitType;
 
   constructor(private convertorService: ConvertorService) {
     this.date = new Date();
     this.model = this.convertorService.toModel(this.date);
-    this.format = [UnitType.Date, UnitType.Month, UnitType.Year, UnitType.Hours, UnitType.Minutes, UnitType.Seconds];
-    this.options[UnitType.Year] = <NumberInputOptionsModel>{min: 0, max: 2200, placeholder: 'yyyy', maxLength: 4};
-    this.options[UnitType.Month] = <NumberInputOptionsModel>{min: 1, max: 12, placeholder: 'mm', maxLength: 2};
-    this.options[UnitType.Date] = <NumberInputOptionsModel>{min: 1, max: 31, placeholder: 'dd', maxLength: 2};
-    this.options[UnitType.Hours] = <NumberInputOptionsModel>{min: 0, max: 23, placeholder: 'hh', maxLength: 2};
-    this.options[UnitType.Minutes] = <NumberInputOptionsModel>{min: 0, max: 59, placeholder: 'mm', maxLength: 2};
-    this.options[UnitType.Seconds] = <NumberInputOptionsModel>{min: 0, max: 59, placeholder: 'ss', maxLength: 2};
-    this.modelReferences[UnitType.Date] = this.model.date.day;
-    this.modelReferences[UnitType.Month] = this.model.date.month;
-    this.modelReferences[UnitType.Year] = this.model.date.year;
+    this.showTime = true;
+    this.options[UnitType.Year] = <NumberInputOptionsModel>{min: 0, max: 2200, placeholder: 'yyyy', length: 4};
+    this.options[UnitType.Month] = <NumberInputOptionsModel>{min: 1, max: 12, placeholder: 'mm', length: 2};
+    this.options[UnitType.Date] = <NumberInputOptionsModel>{min: 1, max: 31, placeholder: 'dd', length: 2};
+    this.options[UnitType.Hours] = <NumberInputOptionsModel>{min: 0, max: 23, placeholder: 'hh', length: 2};
+    this.options[UnitType.Minutes] = <NumberInputOptionsModel>{min: 0, max: 59, placeholder: 'mm', length: 2};
+    this.options[UnitType.Seconds] = <NumberInputOptionsModel>{min: 0, max: 59, placeholder: 'ss', length: 2};
     this.modelChanged();
   }
 
