@@ -7,6 +7,7 @@ import {NumberInputComponent} from "../number-input/number-input.component";
 import {UnitType} from "../../models/enums/UnitType";
 import {DateModel} from "../../models/DateModel";
 import {NumberInputOptionsModel} from "../../models/NumberInputOptionsModel";
+import {DateUtilsService} from "../../services/date-utils.service";
 
 @Component({
   selector: 'app-date-picker',
@@ -34,7 +35,10 @@ export class DatePickerComponent implements OnInit {
   protected options: { [unitType: string]: NumberInputOptionsModel } = {};
   protected readonly UnitType = UnitType;
 
-  constructor(private convertorService: ConvertorService) {
+  constructor(
+    private convertorService: ConvertorService,
+    private dateUtilsService: DateUtilsService
+  ) {
     this.date = new Date();
     this.model = this.convertorService.toModel(this.date);
     this.showTime = true;
@@ -67,6 +71,9 @@ export class DatePickerComponent implements OnInit {
   modelChanged() {
     // number input changes(model already bound), update the date
     this.date = this.convertorService.toDate(this.model);
+
+    // update the max value, to account for month/year changes
+    this.options[UnitType.Date].max = this.dateUtilsService.getLastDateOfMonth(this.date).getDate();
   }
 
   datePickerChanged(selectedCalendarDate: Date | undefined) {

@@ -1,40 +1,70 @@
 <style>
   .centric-date-picker {
     font-family: monospace;
+    width: max-content;
+    padding: .25rem;
+    position: relative;
     .text-input-grid {
       display: grid;
-      grid-template-columns: 1rem 1rem 2rem 1rem 1rem 1rem;
+      grid-template-columns: 1rem auto 1rem auto 2rem auto 1rem auto 1rem auto 1rem;
       grid-gap: .25rem;
     }
     /*background: red;*/
     border: 1px solid;
+    .date-separator {
+      display: contents;
+      &:after {
+        content: '/';
+        color: lightgrey;
+      }
+    }
+    .time-separator {
+      display: contents;
+      &:after {
+        content: ':';
+        color: lightgrey;
+      }
+    }
+    .date-time-separator {
+      display: contents;
+      &:after {
+        content: ' ';
+        padding-left: .25rem;
+      }
+    }
   }
 </style>
+{{options[UnitType.Date].max}}
 <div class="centric-date-picker">
   <div (click)="showCalendar = true" class="text-input-grid">
     <app-number-input #day [options]="options[UnitType.Date]" (change)="modelChanged()"
                       (focusNext)="month.focusMe()" (gotFocus)="numberFocused()"
                       [(data)]="model.date.day"
     ></app-number-input>
+    <div class="date-separator"></div>
     <app-number-input #month [options]="options[UnitType.Month]" (change)="modelChanged()"
                       (focusNext)="year.focusMe()" (focusPrev)="day.focusMe()"
                       (gotFocus)="numberFocused()" [(data)]="model.date.month"
     ></app-number-input>
+    <div class="date-separator"></div>
     <app-number-input #year [options]="options[UnitType.Year]" (change)="modelChanged()"
                       (focusNext)="showTime && hours?.focusMe()" (focusPrev)="month.focusMe()"
                       (gotFocus)="numberFocused()" [(data)]="model.date.year"
     ></app-number-input>
     @if (showTime) {
+      <div class="date-time-separator"></div>
       <app-number-input #hours [options]="options[UnitType.Hours]" (change)="modelChanged()"
                         (gotFocus)="numberFocused()"
                         (focusPrev)="year.focusMe()" (focusNext)="minutes.focusMe()"
                         [(data)]="model.time.hours"
       ></app-number-input>
+      <div class="time-separator"></div>
       <app-number-input #minutes [options]="options[UnitType.Minutes]" (change)="modelChanged()"
                         (gotFocus)="numberFocused()"
                         (focusPrev)="hours.focusMe()" (focusNext)="seconds.focusMe()"
                         [(data)]="model.time.minutes"
       ></app-number-input>
+      <div class="time-separator"></div>
       <app-number-input #seconds [options]="options[UnitType.Seconds]" (change)="modelChanged()"
                         (gotFocus)="numberFocused()"
                         (focusPrev)="minutes.focusMe()"

@@ -10,11 +10,11 @@ export class DateUtilsService {
   }
 
   getFirstDateOfMonth(date: Date): Date {
-    return new Date(date.getFullYear(), date.getMonth(), 1);
+    return new Date(date.getFullYear(), date.getMonth(), 1, 0, 0, 0, 0);
   }
 
   getLastDateOfMonth(date: Date): Date {
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0, 0, 0, 0, 0);
   }
 
   /**
@@ -46,7 +46,7 @@ export class DateUtilsService {
   }
 
   getDateOnly(date: Date): Date {
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
   }
 
   generateCalendar(date: Date): CalendarData[] {
@@ -62,9 +62,14 @@ export class DateUtilsService {
 
     const MAIN_MONTH = date.getMonth();
     const ORIGIN_DATE_WITHOUT_TIME = this.getDateOnly(date);
-    for (let currentDate = START_DATE_OF_CALENDAR; currentDate.getTime() < LAST_DATE_OF_CALENDAR.getTime(); currentDate = new Date(currentDate.getTime() + this.daysToMilliseconds(1))) {
+    console.debug('ORIGIN_DATE_WITHOUT_TIME', ORIGIN_DATE_WITHOUT_TIME);
+    for (let currentDate = START_DATE_OF_CALENDAR;
+         currentDate.getTime() < LAST_DATE_OF_CALENDAR.getTime();
+         currentDate = this.getNextDate(currentDate)) {
+
       const isMainMonth = currentDate.getMonth() === MAIN_MONTH;
       const isOriginDate = currentDate.getTime() === ORIGIN_DATE_WITHOUT_TIME.getTime();
+      console.debug('processed date', currentDate);
       calendar.push(<CalendarData>{date: currentDate, isMainMonth, isOriginDate});
     }
 
@@ -72,15 +77,19 @@ export class DateUtilsService {
   }
 
   firstDayOfPrevMonth(date: Date): Date {
-    return new Date(date.getFullYear(), date.getMonth() - 1, 1);
+    return new Date(date.getFullYear(), date.getMonth() - 1, 1, 0, 0, 0, 0);
   }
 
   firstDayOfNextMonth(date: Date): Date {
-    return new Date(date.getFullYear(), date.getMonth() + 1, 1);
+    return new Date(date.getFullYear(), date.getMonth() + 1, 1, 0, 0, 0, 0);
   }
 
   today(): Date {
     const todayWithTime = new Date();
-    return new Date(todayWithTime.getFullYear(), todayWithTime.getMonth(), todayWithTime.getDate());
+    return new Date(todayWithTime.getFullYear(), todayWithTime.getMonth(), todayWithTime.getDate(), 0, 0, 0, 0);
+  }
+
+  getNextDate(date: Date): Date {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate()+1, 0, 0, 0, 0);
   }
 }

@@ -12,7 +12,7 @@ export class ConvertorService {
   }
 
   toDate(model: DatePickerModel): Date {
-    return new Date(model.date.year, model.date.month - 1, model.date.day, model.time.hours, model.time.minutes, model.time.seconds);
+    return new Date(model.date.year, model.date.month - 1, model.date.day, model.time.hours, model.time.minutes, model.time.seconds, 0);
   }
 
   toModel(date: Date): DatePickerModel {
