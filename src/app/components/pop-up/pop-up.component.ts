@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DateUtilsService} from "../../services/date-utils.service";
 import {CalendarData} from "../../models/CalendarData";
 
@@ -9,25 +9,29 @@ import {CalendarData} from "../../models/CalendarData";
   templateUrl: './pop-up.component.html',
   styleUrl: './pop-up.component.css'
 })
-export class PopUpComponent implements OnInit, OnChanges {
-  @Input() date: Date | undefined;
+export class PopUpComponent implements OnInit {
   @Input() show: boolean = false;
   @Output() datePickerChange = new EventEmitter<Date | undefined>();
   @Output() showChange = new EventEmitter<boolean>();
   monthTitle: string | undefined;
   calendar: CalendarData[] | undefined;
-
-  constructor(private dateUtilsService: DateUtilsService) {
+  _date: Date | undefined;
+  @Input() get date(): Date | undefined {
+    return this._date;
   }
-  ngOnInit() {
-    if (!this.date) {
-      this.date = new Date();
+  set date(value: Date | undefined) {
+    if (value) {
+      const newDate = this.dateUtilsService.getDateOnly(value);
+      this._date = newDate;
+      this.renderCalendar(newDate);
     }
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['date']) {
-      this.renderCalendar(changes['date'].currentValue as Date);
+  constructor(private dateUtilsService: DateUtilsService) {}
+
+  ngOnInit() {
+    if (!this.date) {
+      this.date = new Date();
     }
   }
 
@@ -38,13 +42,15 @@ export class PopUpComponent implements OnInit, OnChanges {
 
   prevMonth(): void {
     if (this.date) {
-      this.datePickerChange.emit(this.dateUtilsService.firstDayOfPrevMonth(this.date));
+      this.date = this.dateUtilsService.reduceMonth(this.date)
+      this.datePickerChange.emit(this.date);
     }
   }
 
   nextMonth(): void {
     if (this.date) {
-      this.datePickerChange.emit(this.dateUtilsService.firstDayOfNextMonth(this.date));
+      this.date = this.dateUtilsService.increaseMonth(this.date)
+      this.datePickerChange.emit(this.date);
     }
   }
 

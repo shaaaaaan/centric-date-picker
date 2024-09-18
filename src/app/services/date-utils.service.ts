@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {CalendarData} from "../models/CalendarData";
+import dayjs from "dayjs";
 
 @Injectable({
   providedIn: 'root'
@@ -9,20 +10,12 @@ export class DateUtilsService {
   constructor() {
   }
 
-  getFirstDateOfMonth(date: Date): Date {
-    return new Date(date.getFullYear(), date.getMonth(), 1, 0, 0, 0, 0);
-  }
-
-  getLastDateOfMonth(date: Date): Date {
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0, 0, 0, 0, 0);
-  }
-
   /**
    Pass as input getDay function called on a Date object.
    <br>
    Returns: 0 - Monday, 1 - Tuesday ...
    **/
-  getWorkDay(standardDay: number): number {
+  getDayOfWeek(standardDay: number): number {
     switch (standardDay) {
       case 0:
         return 6; // Sunday
@@ -37,51 +30,38 @@ export class DateUtilsService {
     }
   }
 
-  daysToMilliseconds(days: number): number {
-    return days * 24 * 60 * 60 * 1000;
-  }
-
   getMonthTitle(date: Date): string {
     return date.toLocaleString('default', {month: 'long'});
+  }
+
+  getFirstDateOfMonth(date: Date): Date {
+    return dayjs(date).date(1).toDate();
+  }
+
+  getLastDateOfMonth(date: Date): Date {
+    return dayjs(date).endOf("month").startOf('day').toDate();
   }
 
   getDateOnly(date: Date): Date {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
   }
 
-  generateCalendar(date: Date): CalendarData[] {
-    const calendar = [];
-    const DAYS_IN_WEEK: number = 7;
-    const FIRST_DATE_OF_MONTH: Date = this.getFirstDateOfMonth(date);
-    const FIRST_DAY_OF_MONTH = this.getWorkDay(FIRST_DATE_OF_MONTH.getDay());
-    const START_DATE_OF_CALENDAR = new Date(FIRST_DATE_OF_MONTH.getTime() - this.daysToMilliseconds(FIRST_DAY_OF_MONTH));
-
-    const LAST_DATE_OF_MONTH: Date = this.getLastDateOfMonth(date);
-    const LAST_DAY_OF_MONTH = this.getWorkDay(LAST_DATE_OF_MONTH.getDay());
-    const LAST_DATE_OF_CALENDAR = new Date(LAST_DATE_OF_MONTH.getTime() + this.daysToMilliseconds(DAYS_IN_WEEK - LAST_DAY_OF_MONTH));
-
-    const MAIN_MONTH = date.getMonth();
-    const ORIGIN_DATE_WITHOUT_TIME = this.getDateOnly(date);
-    console.debug('ORIGIN_DATE_WITHOUT_TIME', ORIGIN_DATE_WITHOUT_TIME);
-    for (let currentDate = START_DATE_OF_CALENDAR;
-         currentDate.getTime() < LAST_DATE_OF_CALENDAR.getTime();
-         currentDate = this.getNextDate(currentDate)) {
-
-      const isMainMonth = currentDate.getMonth() === MAIN_MONTH;
-      const isOriginDate = currentDate.getTime() === ORIGIN_DATE_WITHOUT_TIME.getTime();
-      console.debug('processed date', currentDate);
-      calendar.push(<CalendarData>{date: currentDate, isMainMonth, isOriginDate});
+  reduceMonth(date: Date): Date {
+    if (dayjs(date).endOf('month').date() === date.getDate()) {
+      console.debug('is last day of month, when going back 1 month, go to last day');
+      return dayjs(date).startOf('month').subtract(1, 'month').endOf('month').toDate();
+    } else {
+      return dayjs(date).subtract(1, 'month').toDate();
     }
-
-    return calendar;
   }
 
-  firstDayOfPrevMonth(date: Date): Date {
-    return new Date(date.getFullYear(), date.getMonth() - 1, 1, 0, 0, 0, 0);
-  }
-
-  firstDayOfNextMonth(date: Date): Date {
-    return new Date(date.getFullYear(), date.getMonth() + 1, 1, 0, 0, 0, 0);
+  increaseMonth(date: Date): Date {
+    if (dayjs(date).endOf('month').date() === date.getDate()) {
+      console.debug('is last day of month, when moving forward 1 month, go to last day');
+      return dayjs(date).startOf('month').add(1, 'month').endOf('month').toDate();
+    } else {
+      return dayjs(date).add(1, 'month').toDate();
+    }
   }
 
   today(): Date {
@@ -89,7 +69,29 @@ export class DateUtilsService {
     return new Date(todayWithTime.getFullYear(), todayWithTime.getMonth(), todayWithTime.getDate(), 0, 0, 0, 0);
   }
 
-  getNextDate(date: Date): Date {
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate()+1, 0, 0, 0, 0);
+  generateCalendar(date: Date): CalendarData[] {
+    const calendar = [];
+    const DAYS_IN_WEEK: number = 7;
+    const FIRST_DATE_OF_MONTH: Date = this.getFirstDateOfMonth(date);
+    const DAY_IDX_OF_FIRST_WEEK = this.getDayOfWeek(FIRST_DATE_OF_MONTH.getDay());
+    const START_DATE_OF_CALENDAR = dayjs(FIRST_DATE_OF_MONTH).subtract(DAY_IDX_OF_FIRST_WEEK, 'day');
+
+    const LAST_DATE_OF_MONTH: Date = this.getLastDateOfMonth(date);
+    const DAY_IDX_OF_LAST_WEEK = this.getDayOfWeek(LAST_DATE_OF_MONTH.getDay());
+    const LAST_DATE_OF_CALENDAR = dayjs(LAST_DATE_OF_MONTH).add((DAYS_IN_WEEK - DAY_IDX_OF_LAST_WEEK), 'day');
+
+    const MAIN_MONTH = date.getMonth();
+    const ORIGIN_DATE_WITHOUT_TIME = this.getDateOnly(date);
+
+    for (let currentDate = START_DATE_OF_CALENDAR;
+         currentDate.isBefore(LAST_DATE_OF_CALENDAR);
+         currentDate = currentDate.add(1, 'day')) {
+
+      const isMainMonth = currentDate.month() === MAIN_MONTH;
+      const isOriginDate = currentDate.isSame(ORIGIN_DATE_WITHOUT_TIME);
+      calendar.push(<CalendarData>{date: currentDate.toDate(), isMainMonth, isOriginDate});
+    }
+
+    return calendar;
   }
 }

@@ -34,7 +34,6 @@
     }
   }
 </style>
-{{options[UnitType.Date].max}}
 <div class="centric-date-picker">
   <div (click)="showCalendar = true" class="text-input-grid">
     <app-number-input #day [options]="options[UnitType.Date]" (change)="modelChanged()"
