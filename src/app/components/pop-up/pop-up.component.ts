@@ -42,14 +42,14 @@ export class PopUpComponent implements OnInit {
 
   prevMonth(): void {
     if (this.date) {
-      this.date = this.dateUtilsService.reduceMonth(this.date)
+      this.date = this.dateUtilsService.getPreviousMonth(this.date)
       this.datePickerChange.emit(this.date);
     }
   }
 
   nextMonth(): void {
     if (this.date) {
-      this.date = this.dateUtilsService.increaseMonth(this.date)
+      this.date = this.dateUtilsService.getNextMonth(this.date)
       this.datePickerChange.emit(this.date);
     }
   }

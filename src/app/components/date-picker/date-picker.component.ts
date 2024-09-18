@@ -24,7 +24,7 @@ export class DatePickerComponent implements OnInit {
   @Input() date: Date;
   @Input() showTime: boolean;
   @Input() showSeconds: boolean;
-  @Output() changed = new EventEmitter<Date>();
+  @Output() input = new EventEmitter<Date>();
   @ViewChild('hours') hours: NumberInputComponent | undefined;
   @ViewChild('minutes') minutes: NumberInputComponent | undefined;
   @ViewChild('seconds') seconds: NumberInputComponent | undefined;
@@ -76,6 +76,8 @@ export class DatePickerComponent implements OnInit {
 
     // update the max value, to account for month/year changes
     this.options[UnitType.Date].max = this.dateUtilsService.getLastDateOfMonth(this.date).getDate();
+
+    this.input.emit(this.date);
   }
 
   datePickerChanged(selectedCalendarDate: Date | undefined) {

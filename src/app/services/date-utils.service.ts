@@ -46,7 +46,7 @@ export class DateUtilsService {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
   }
 
-  reduceMonth(date: Date): Date {
+  getPreviousMonth(date: Date): Date {
     if (dayjs(date).endOf('month').date() === date.getDate()) {
       console.debug('is last day of month, when going back 1 month, go to last day');
       return dayjs(date).startOf('month').subtract(1, 'month').endOf('month').toDate();
@@ -55,7 +55,7 @@ export class DateUtilsService {
     }
   }
 
-  increaseMonth(date: Date): Date {
+  getNextMonth(date: Date): Date {
     if (dayjs(date).endOf('month').date() === date.getDate()) {
       console.debug('is last day of month, when moving forward 1 month, go to last day');
       return dayjs(date).startOf('month').add(1, 'month').endOf('month').toDate();

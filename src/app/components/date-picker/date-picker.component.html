@@ -36,7 +36,7 @@
 </style>
 <div class="centric-date-picker">
   <div (click)="showCalendar = true" class="text-input-grid">
-    <app-number-input #day [options]="options[UnitType.Date]" (change)="modelChanged()"  (gotFocus)="numberFocused()"
+    <app-number-input #day [options]="options[UnitType.Date]" (change)="modelChanged()" (gotFocus)="numberFocused()"
                       (focusNext)="month.focusMe()"
                       [(data)]="model.date.day"
     ></app-number-input>
