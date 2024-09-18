@@ -22,6 +22,7 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
+                "output": "public",
                 "glob": "**/*",
                 "input": "public"
               }
@@ -80,6 +81,7 @@
             "tsConfig": "tsconfig.spec.json",
             "assets": [
               {
+                "output": "public",
                 "glob": "**/*",
                 "input": "public"
               }

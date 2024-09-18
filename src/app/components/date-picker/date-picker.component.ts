@@ -38,9 +38,9 @@ export class DatePickerComponent implements OnInit {
     this.date = new Date();
     this.model = this.convertorService.toModel(this.date);
     this.showTime = true;
-    this.options[UnitType.Year] = <NumberInputOptionsModel>{min: 0, max: 2200, placeholder: 'yyyy', length: 4};
-    this.options[UnitType.Month] = <NumberInputOptionsModel>{min: 1, max: 12, placeholder: 'mm', length: 2};
-    this.options[UnitType.Date] = <NumberInputOptionsModel>{min: 1, max: 31, placeholder: 'dd', length: 2};
+    this.options[UnitType.Year] = <NumberInputOptionsModel>{min: 0, max: 2200, placeholder: 'YYYY', length: 4};
+    this.options[UnitType.Month] = <NumberInputOptionsModel>{min: 1, max: 12, placeholder: 'MM', length: 2};
+    this.options[UnitType.Date] = <NumberInputOptionsModel>{min: 1, max: 31, placeholder: 'DD', length: 2};
     this.options[UnitType.Hours] = <NumberInputOptionsModel>{min: 0, max: 23, placeholder: 'hh', length: 2};
     this.options[UnitType.Minutes] = <NumberInputOptionsModel>{min: 0, max: 59, placeholder: 'mm', length: 2};
     this.options[UnitType.Seconds] = <NumberInputOptionsModel>{min: 0, max: 59, placeholder: 'ss', length: 2};

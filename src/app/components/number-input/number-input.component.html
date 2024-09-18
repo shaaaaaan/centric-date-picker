@@ -1,25 +1,39 @@
 <style>
-  .number-input {
-    background: none;
-    outline: none;
-    border: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  input::-webkit-inner-spin-button {
-    display: none;
+  .number-input-container {
+    position: relative;
+    .number-input {
+      background: none;
+      outline: none;
+      border: none;
+      padding: 0;
+      margin: 0;
+    }
+    .number-input::-webkit-inner-spin-button {
+      display: none;
+    }
+    .number-placeholder {
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: lightgrey;
+    }
   }
 </style>
-<input #domElement
-       (focus)="focus($event)"
-       (input)="input()"
-       [min]="options?.min ?? null"
-       [placeholder]="options?.placeholder"
-       (click)="selectAllText()"
-       (keydown)="keyDown($event)"
-       (keyup)="keyUp()"
-       class="number-input"
-       type="number"
-       [max]="options?.max ?? null"
->
+<div class="number-input-container">
+  @if (inputElement?.value == null || inputElement?.value?.trim()?.length === 0) {
+    <div class="number-placeholder">
+      {{options?.placeholder ?? '--'}}
+    </div>
+  }
+  <input #domElement
+         (focus)="focus($event)"
+         (input)="input()"
+         [min]="options?.min ?? null"
+         (click)="selectAllText()"
+         (keydown)="keyDown($event)"
+         (keyup)="keyUp()"
+         class="number-input"
+         type="number"
+         [max]="options?.max ?? null"
+  >
+</div>
