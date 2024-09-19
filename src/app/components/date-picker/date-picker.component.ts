@@ -8,6 +8,7 @@ import {UnitType} from "../../models/enums/UnitType";
 import {DateModel} from "../../models/DateModel";
 import {NumberInputOptionsModel} from "../../models/NumberInputOptionsModel";
 import {DateUtilsService} from "../../services/date-utils.service";
+import dayjs from "dayjs";
 
 @Component({
   selector: 'app-date-picker',
@@ -22,9 +23,9 @@ import {DateUtilsService} from "../../services/date-utils.service";
 })
 export class DatePickerComponent implements OnInit {
   @Input() date: Date;
-  @Input() showTime: boolean;
+  @Input() mode: 'date' | 'time' | 'datetime' = 'datetime';
   @Input() showSeconds: boolean;
-  @Output() input = new EventEmitter<Date>();
+  @Output() input = new EventEmitter<string>();
   @ViewChild('hours') hours: NumberInputComponent | undefined;
   @ViewChild('minutes') minutes: NumberInputComponent | undefined;
   @ViewChild('seconds') seconds: NumberInputComponent | undefined;
@@ -35,6 +36,12 @@ export class DatePickerComponent implements OnInit {
   clickedInside: boolean = false;
   protected options: { [unitType: string]: NumberInputOptionsModel } = {};
   protected readonly UnitType = UnitType;
+  get hasTime(): boolean {
+    return this.mode === 'datetime' || this.mode ==='time';
+  }
+  get hasDate(): boolean {
+    return this.mode === 'datetime' || this.mode ==='date';
+  }
 
   constructor(
     private convertorService: ConvertorService,
@@ -42,9 +49,8 @@ export class DatePickerComponent implements OnInit {
   ) {
     this.date = new Date();
     this.model = this.convertorService.toModel(this.date);
-    this.showTime = true;
     this.showSeconds = true;
-    this.options[UnitType.Year] = <NumberInputOptionsModel>{min: 0, max: 2200, placeholder: 'YYYY', length: 4};
+    this.options[UnitType.Year] = <NumberInputOptionsModel>{min: 1800, max: 2200, placeholder: 'YYYY', length: 4};
     this.options[UnitType.Month] = <NumberInputOptionsModel>{min: 1, max: 12, placeholder: 'MM', length: 2};
     this.options[UnitType.Date] = <NumberInputOptionsModel>{min: 1, max: 31, placeholder: 'DD', length: 2};
     this.options[UnitType.Hours] = <NumberInputOptionsModel>{min: 0, max: 23, placeholder: 'hh', length: 2};
@@ -72,12 +78,20 @@ export class DatePickerComponent implements OnInit {
 
   modelChanged() {
     // number input changes(model already bound), update the date
-    this.date = this.convertorService.toDate(this.model);
+    this.date = this.convertorService.toDate(this.model, 'datetime'); // store datetime information for valid date time object
 
     // update the max value, to account for month/year changes
     this.options[UnitType.Date].max = this.dateUtilsService.getLastDateOfMonth(this.date).getDate();
 
-    this.input.emit(this.date);
+    const STRIPED_OUTPUT = this.convertorService.toDate(this.model, this.mode);
+    let DESIRED_OUTPUT = '';
+    switch (this.mode) {
+      case 'datetime': DESIRED_OUTPUT = STRIPED_OUTPUT.toString(); break;
+      case 'date': DESIRED_OUTPUT = dayjs(STRIPED_OUTPUT).format('DD-MM-YYYY'); break;
+      case 'time': DESIRED_OUTPUT = dayjs(STRIPED_OUTPUT).format('HH:mm:ss'); break;
+    }
+    this.input.emit(DESIRED_OUTPUT);
+    console.log(`${this.mode} changed:`, DESIRED_OUTPUT);
   }
 
   datePickerChanged(selectedCalendarDate: Date | undefined) {
